@@ -3,7 +3,7 @@
 
 struct system_params{
 
-  long seed;
+  int seed;
 
   int trial,
       Nx,
@@ -11,10 +11,15 @@ struct system_params{
       Nm,
       IsoDiffFlag,
       EqIcFlag,
+      RandPerbAmpFlag,
+      pXmodes,
+      pYmodes,
+      pMmodes;
+      
 
   double dt,
          trec,
-         tot,
+         tend,
          bc,
          vD,         
          Lx,
@@ -22,7 +27,8 @@ struct system_params{
          Lrod,
          Dpar,
          Dperp,
-         Dr;
+         Dr,
+         PerbAmp;
 
   //Initialize
 

@@ -13,6 +13,5 @@
 #include "Ml3dPrint2Screen.h"
 
 #include "Parameters.h"
-#include "ParametersDefault.h"
 
 #endif //_HARDROD_HARDROD_H_
