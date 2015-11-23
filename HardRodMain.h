@@ -3,15 +3,15 @@
 
 #include <iostream>
 #include <fstream>
-#include "math.h"
+#include <math.h>
 #include "Array.h"
 #include "fftw++.h"
 #include "spGrid.h"
 #include "tGrid.h"
 #include "Propagator.h"
-//#include "Density.h"
 #include "Ml3dPrint2Screen.h"
-
 #include "Parameters.h"
+#include "ParseParams.h" 
+#include "MayerFnc.h"
 
 #endif //_HARDROD_HARDROD_H_

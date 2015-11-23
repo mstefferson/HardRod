@@ -1,5 +1,5 @@
 #ifndef _HARDROD_PARAMETERS_H_
-#define _HARDROD_HARDROD_H_
+#define _HARDROD_PARAMETERS_H_
 
 struct system_params{
 
@@ -16,7 +16,6 @@ struct system_params{
       pYmodes,
       pMmodes;
       
-
   double dt,
          trec,
          tend,
@@ -28,7 +27,7 @@ struct system_params{
          Dpar,
          Dperp,
          Dr,
-         PerbAmp;
+         PertrbAmp;
 
   //Initialize
 
