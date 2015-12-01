@@ -5,8 +5,10 @@
 
 #include <math.h>
 #include "Array.h"
+#include "fftw++.h"
+#include "typedef.h"
 
 void MayerFncHardRod(int Nx,int Ny,int Nm,double Lx,double Ly,double Lrod,
-    Array::array3<int> &MayerFnc);
+    Ad3 &MayerFnc);
 
 #endif 

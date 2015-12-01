@@ -2,7 +2,7 @@
 #include "MayerFnc.h"
 
 void MayerFncHardRod(int Nx, int Ny,int Nm, double Lx,double Ly, double Lrod,
-    Array::array3<int> &MayerFnc){
+    Ad3 &MayerFnc){
  
   double xTemp, yTemp, phiTemp, xTempSq, yTempSq, ylL, yuL, yMaxSq, DistSq;
   double dx    = Lx/Nx;

@@ -10,6 +10,7 @@ pXmodes = 2;
 pYmodes = 2;
 pMmodes = 2;
 
+ABFlag  = 0;
 IsoDiffFlag = 1;
 EqIcFlag = 0;
 RandPerbAmpFlag = 0;

@@ -18,7 +18,8 @@ class spGrid
      // Returns grid spacing
 
     void xVecMaker();
-    void xVecMaker(int N, double L, double dx, double *pos);
+    void xVecMaker(int N, double L,double* pos);
+    
      // Builds position vector
 
     void kVecMaker();

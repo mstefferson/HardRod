@@ -23,6 +23,11 @@ if( param_name.compare( "Nm" ) == 0 ) {
   std::cout << " Nm = " << param_value << std::endl;
 }
 
+if( param_name.compare( "ABFlag" ) == 0 ) {
+  params.ABFlag =  atoi( param_value.c_str() );
+  std::cout << " ABFlag = " << param_value << std::endl;
+}
+
 if( param_name.compare( "IsoDiffFlag" ) == 0 ) {
   params.IsoDiffFlag =  atoi( param_value.c_str() );
   std::cout << " IsoDiffFlag = " << param_value << std::endl;

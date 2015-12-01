@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <math.h>
 #include "Array.h"
 #include "fftw++.h"
@@ -13,5 +14,9 @@
 #include "Parameters.h"
 #include "ParseParams.h" 
 #include "MayerFnc.h"
+#include "EqDist.h"
+#include "Rho3DMaker.h"
+#include "NlHardRodDr.h"
+#include "typedef.h"
 
 #endif //_HARDROD_HARDROD_H_

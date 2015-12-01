@@ -87,8 +87,10 @@ void spGrid::xVecMaker()
     pos_[i] = pos_[i-1] + dx_;
   }
 }
-void spGrid::xVecMaker(int N, double L, double dx, double *pos)
+void spGrid::xVecMaker(int N, double L, double* pos )
 {
+  double dx = L/N;
+
   pos[0] = -L/2;
 
   for(int i = 1; i < N; i++)

@@ -10,6 +10,7 @@ Propagator::Propagator()
   N1_      = 0;
   N2_      = 0;
   N3_      = 0;
+  dt_      = 0;
   LopFTd_   = NULL;
   Ud_       = NULL;
 } 
@@ -21,13 +22,14 @@ Propagator::Propagator( int N1, double* k1, double D, double dt, bool Iso)
   N1_ = N1;
   N2_ = 0;
   N3_ = 0;
+  dt_ = dt;
   if( IsoFlag_ == 1)
   {
   
     LopFTd_ = new double [N1_];
     Ud_     = new double [N1_];
 
-    LopDiagMaker(k1, D);
+    LopIsoDiagMaker(k1, D);
     PropIsoMaker1(dt);
   
   }
@@ -48,6 +50,7 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
   N1_ = N1;
   N2_ = N2;
   N3_ = N3;
+  dt_ = dt;
   if( IsoFlag_ == 1)
   {
   
@@ -55,7 +58,34 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
 
     Ud_ = new double [ N1_ * N2_ * N3_];
 
-    LopDiagMaker(k1, k2, k3, D);
+    LopIsoDiagMaker(k1, k2, k3, D);
+    PropIsoMaker3(dt);
+  
+  }
+  else //not written
+  {
+  
+    LopFTd_ = NULL;
+    Ud_   = NULL;
+  }
+
+}
+
+Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
+                         double Dpos, double Dr, double dt, bool Iso)
+{
+  IsoFlag_ = Iso;
+  N1_ = N1;
+  N2_ = N2;
+  N3_ = N3;
+  if( IsoFlag_ == 1)
+  {
+  
+    LopFTd_ = new double [ N1_ * N2_ * N3_];
+
+    Ud_ = new double [ N1_ * N2_ * N3_];
+
+    LopIsoDiagMaker(k1, k2, k3, Dpos, Dr);
     PropIsoMaker3(dt);
   
   }
@@ -69,7 +99,7 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
 }
 
 
-void Propagator::LopDiagMaker(double* kt, double D)
+void Propagator::LopIsoDiagMaker(double* kt, double D)
 {
   for( int i = 0; i < N1_; ++i)
   {
@@ -79,13 +109,25 @@ void Propagator::LopDiagMaker(double* kt, double D)
 }
 
 
-void Propagator::LopDiagMaker(double* k1t, double* k2t, double* k3t, double D)
+void Propagator::LopIsoDiagMaker(double* k1t, double* k2t, double* k3t, double D)
 {
   for( int i = 0; i < N1_; ++i){
     for( int j = 0; j < N2_; ++ j){
       for ( int k = 0; k < N3_; ++k ){
      LopFTd_[i + j*N1_ +  k*N1_*N2_] = -D * ( 
                                       k1t[i] * k1t[i] + k2t[j] * k2t[j] + k3t[k] * k3t[k] );
+      }
+    }
+  }
+}
+
+void Propagator::LopIsoDiagMaker(double* k1t, double* k2t, double* k3t, double Dpos, double Dr)
+{
+  for( int i = 0; i < N1_; ++i){
+    for( int j = 0; j < N2_; ++ j){
+      for ( int k = 0; k < N3_; ++k ){
+     LopFTd_[i + j*N1_ +  k*N1_*N2_] = - ( Dpos * ( k1t[i] * k1t[i] + k2t[j] * k2t[j] ) 
+                                      + Dr * k3t[k] * k3t[k] );
       }
     }
   }
@@ -127,4 +169,72 @@ void  Propagator::PropPrint(){
 double* Propagator::getLop(){ return LopFTd_; }
 double* Propagator::getProp(){ return Ud_; }
 
+/*void Propagator::Propagate( int ABflag ){
 
+
+}
+*/
+
+//////////////////////// Propagator Functions ///////////////////////
+/*
+void PropMaster( int ABflag, Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev) {
+ 
+if( IsoFlag_ == 1 ){
+  switch(ABflag){
+
+    case 0: PropAB0c( rhoFTnext, rhoFT); // Diffusion
+    case 1: PropAB1c( rhoFTnext, rhoFT, NL ); // AB 1
+    case 2: PropAB2c( rhoFTnext, rhoFT, NL, NLprev); // AB 2
+
+     }
+}
+else{ std::cout << "not written yet" << std::endl; }
+}
+*/
+
+void Propagator::PropAB0c( Ac3 &rhoFTnext, Ac3 &rhoFT ) {
+
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] * rhoFT[i][j][k];
+
+      }
+    }
+  }
+} 
+
+void Propagator::PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL ) {
+
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
+          * ( rhoFT[i][j][k] + dt_ * NL[i][j][k] );
+
+      }
+    }
+  }
+}
+
+void Propagator::PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev ) {
+  
+  double Nlcon  = 3 * dt_ / 2;
+  double NlPcon  = dt_ / 2;
+  
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+//        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
+ //         * ( rhoFT[i][j][k] + dt_ / 2 * ( 3 * NL[i][j][k] - NLprev[i][j][k] ) ) ;
+   
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
+          * ( rhoFT[i][j][k] + Nlcon *  NL[i][j][k] - NlPcon * NLprev[i][j][k]  )  ;
+              
+      }
+    }
+  }
+}
