@@ -18,5 +18,6 @@
 #include "Rho3DMaker.h"
 #include "NlHardRodDr.h"
 #include "typedef.h"
+#include "CheckBrokenDen.h"
 
 #endif //_HARDROD_HARDROD_H_

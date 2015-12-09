@@ -7,7 +7,9 @@
 #include "Array.h"
 #include "math.h"
 #include "fftw++.h" 
+#include "typedef.h"
 #include <iostream>
+#include <math.h>
 
 class Rho3DMaker{
   public:
@@ -27,6 +29,10 @@ class Rho3DMaker{
     void Perturb( int Nx, int Ny, int Nm, int pX, int pY, int pM,
         double PertrbAmp, Array::array3<Complex> &rhoFT );
     
+    void PerturbReal(int Nx, int Ny, int Nm, int pX, int pY, int pM,
+        double* kx , double* ky, double* km, double* x,double *y, double* phi, 
+        double PertrbAmp, Ad3 &rho);
+ 
     void print(int Nx, int Ny, int Nm, Array::array3<double> &rho);
 
 };

@@ -4,7 +4,7 @@
 
 #include "Ml3dPrint2Screen.h"
 
-void Ml3dPrint(double*** M, int Nx, int Ny, int Nz){
+void Ml3dPrint( Ad3 M, int Nx, int Ny, int Nz){
 
 for( int k = 0; k < Nz; ++k ) {
   for( int i = 0; i < Nx; ++i ) {

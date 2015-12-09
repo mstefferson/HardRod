@@ -3,3 +3,6 @@
 
 # Executeables
 *.exe
+
+# Outputs and ish
+*.txt

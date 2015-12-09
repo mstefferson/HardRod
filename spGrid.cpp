@@ -80,7 +80,7 @@ double spGrid::dxMaker(int N,double L)
 // Builds poisition vector
 void spGrid::xVecMaker()
 {
-  pos_[0] = -L_/2;
+  pos_[0] = 0;
 
   for(int i = 1; i < N_; i++)
   {
@@ -91,7 +91,7 @@ void spGrid::xVecMaker(int N, double L, double* pos )
 {
   double dx = L/N;
 
-  pos[0] = -L/2;
+  pos[0] = 0;
 
   for(int i = 1; i < N; i++)
   {

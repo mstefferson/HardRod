@@ -14,4 +14,5 @@ void parse_params(std::string param_file, system_params &params) {
 #include "ParseParamsBody.cpp"
     }
     std::cout << std::endl;
+    std::cout << "Finished reading parameters " << std::endl;
 }

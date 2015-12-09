@@ -78,6 +78,7 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
   N1_ = N1;
   N2_ = N2;
   N3_ = N3;
+  dt_ = dt;
   if( IsoFlag_ == 1)
   {
   
@@ -205,15 +206,15 @@ void Propagator::PropAB0c( Ac3 &rhoFTnext, Ac3 &rhoFT ) {
   }
 } 
 
-void Propagator::PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL ) {
+void Propagator::PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT ) {
 
   for(int i = 0; i <  N1_ ; ++i){
     for( int j = 0; j <  N2_ ; ++j){
       for( int k = 0; k < N3_; ++k){
     
         rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
-          * ( rhoFT[i][j][k] + dt_ * NL[i][j][k] );
-
+          * ( rhoFT[i][j][k] + dt_ * NlFT[i][j][k] );
+        
       }
     }
   }
@@ -232,7 +233,8 @@ void Propagator::PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev ) {
  //         * ( rhoFT[i][j][k] + dt_ / 2 * ( 3 * NL[i][j][k] - NLprev[i][j][k] ) ) ;
    
         rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
-          * ( rhoFT[i][j][k] + Nlcon *  NL[i][j][k] - NlPcon * NLprev[i][j][k]  )  ;
+          * ( rhoFT[i][j][k] + Nlcon *  NL[i][j][k] 
+               - NlPcon * Ud_[i + j*N1_ +  k * N1_ * N2_] * NLprev[i][j][k]  )  ;
               
       }
     }
