@@ -27,7 +27,7 @@ class NlHardRodDr{
 
     Complex* ikx_;
     Complex* iky_;
-    Complex* km_;
+    Complex* ikm_;
 
   public:
     // Constructor
