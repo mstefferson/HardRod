@@ -118,7 +118,19 @@ int main(){
       NlFT, Forward3, Backward3);
   Nlclass.NlDrCalcC(rho, ji, jiFT, NlFT, Forward3); 
 
-  // Let program know where we are
+  // Order parameters
+  OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
+  OPs.OPmaker(rho);
+
+  std::cout << "C = " << std::endl;
+  OPs.printC();
+  std::cout << "PO = " << std::endl;
+  OPs.printPO();
+  std::cout << "NO = " << std::endl;
+  OPs.printNO();
+    
+
+//// Let program know where we are
   std::cout << "Initialized all variables " << std::endl;
 
   //std::cout << "Nl t =0" << std::endl << NlFT << std::endl;

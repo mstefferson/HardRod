@@ -19,5 +19,6 @@
 #include "NlHardRodDr.h"
 #include "typedef.h"
 #include "CheckBrokenDen.h"
+#include "OPclass.h"
 
 #endif //_HARDROD_HARDROD_H_
