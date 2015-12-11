@@ -20,7 +20,7 @@ OBJS = HardRodMain.o fftw++.o spGrid.o tGrid.o Propagator.o Ml3dPrint2Screen.o
 OBJS +=	ParseParams.o MayerFncHardRod.o EqDist.o Rho3DMaker.o NlHardRodDr.o CheckBrokenDen.o
 OBJS += OPclass.o
 
-MAIN = diffuse.exe
+MAIN = ../diffuse.exe
 
 .PHONY: all
 

@@ -23,8 +23,8 @@ class OPclass{
   
     double* sin_;
     double* cos_;
-    double* sinsin_;
-    double* coscos_;
+    double* QxxInt_;
+    double* QyyInt_;
     double* cossin_;
 
     double** C_;
@@ -42,4 +42,5 @@ class OPclass{
     void printC();
     void printPO();
     void printNO();
+    void printTrigs();
 };

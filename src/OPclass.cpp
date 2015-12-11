@@ -19,9 +19,9 @@ OPclass::OPclass( int Nx, int Ny, int Nm, double* phi ){
 
   sin_ = new double[Nm_];
   cos_ = new double[Nm_];
-  sinsin_ = new double[Nm_];
-  coscos_ = new double[Nm_];
   cossin_ = new double[Nm_];
+  QxxInt_= new double[Nm_];
+  QyyInt_ = new double[Nm_];
 
   C_ = new double*[Nx_];
   PO_ = new double*[Nx_];
@@ -37,9 +37,9 @@ OPclass::OPclass( int Nx, int Ny, int Nm, double* phi ){
   for( int i = 0; i < Nm_; ++i ){
     sin_[i] = sin( phi[i] );
     cos_[i] = cos( phi[i] );
-    sinsin_[i] = sin( phi[i] ) * sin( phi[i] );
+    QyyInt_[i] = sin( phi[i] ) * sin( phi[i] ) - 0.5;
     cossin_[i] = cos( phi[i] ) * sin( phi[i] );
-    coscos_[i] = cos( phi[i] ) * cos( phi[i] );
+    QxxInt_[i] = cos( phi[i] ) * cos( phi[i] ) - 0.5;
   }
 
 }
@@ -95,19 +95,25 @@ void OPclass::PolarOrdCalc(Ad3& rho){
 // Nematic Order
 void OPclass::NemOrdCalc(Ad3& rho){
 
-    for( int i = 0; i < Nx_; ++i ){
-      for( int j = 0; j < Ny_; ++j ){
+    for( int i = 0; i < Nx_; i++ ){
+      for( int j = 0; j < Ny_; j++ ){
         NO_[i][j] = 0;
         QxxTemp_ = 0;
         QxyTemp_ = 0;
         QyyTemp_ = 0;
 
-        for( int k = 0; k < Nm_; ++k ){
+        for( int k = 0; k < Nm_; k++ ){
 
-          QxxTemp_ += rho[i][j][k] * ( coscos_[k] - 1/2 );
-          QxyTemp_ += rho[i][j][k] * cossin_[k];
-          QyyTemp_ += rho[i][j][k] * ( sinsin_[k] - 1/2 );
+          //QxxTemp_ = QxxTemp_ + rho[i][j][k] *  coscos_[k] - rho[i][j][k] * 1/2 ;
+          QxxTemp_ = QxxTemp_ + rho[i][j][k] *  QxxInt_[k] ;
 
+          //QxxTemp_ += rho[i][j][k] * ( coscos_[k]  );
+          QxyTemp_ =  QxyTemp_ + rho[i][j][k] * cossin_[k];
+          //QyyTemp_ =  QyyTemp_ + rho[i][j][k] *  sinsin_[k] - rho[i][j][k] * 1/2 ;
+          QyyTemp_ =  QyyTemp_ + rho[i][j][k] *  QyyInt_[k] ;
+          //QyyTemp_ += rho[i][j][k] * ( sinsin_[k]  );
+
+          //std::cout << coscos_[k] << " ";
         }
 
         QxxTemp_ *= intFac_;
@@ -118,11 +124,13 @@ void OPclass::NemOrdCalc(Ad3& rho){
         NO_[i][j] = ( ( QxxTemp_ + QyyTemp_ )  + 
         sqrt( ( ( QxxTemp_ - QyyTemp_ ) * ( QxxTemp_ - QyyTemp_ ) )  + 
             4 * QxyTemp_ * QxyTemp_ ) ) / C_[i][j];
-        if( i == Nx_ - 1 && j == Ny_ - 1 ){
+        if( (i == Nx_ - 1) && (j == Ny_ - 1) ){
           std::cout << "Qxx = " << QxxTemp_ << std::endl;
+          std::cout << "Qxx/C = " << QxxTemp_/C_[i][j] << std::endl;
           std::cout << "Qxy = " << QxyTemp_ << std::endl;
           std::cout << "Qyy = " << QyyTemp_ << std::endl;
           std::cout << "Nij = " << NO_[i][j] << std::endl;
+          std::cout << "rhoij0 = " << rho[i][j][0] << std::endl;
         }
       }
     }
@@ -157,3 +165,39 @@ void OPclass::printNO(){
   }
   std::cout << std::endl;
 }
+
+
+void OPclass::printTrigs(){
+
+  std::cout << "sin =" << std::endl;
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << sin_[i] << std::endl;
+  }
+  std::cout << std::endl;
+
+  std::cout << "cos =" << std::endl;
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << cos_[i] << std::endl;
+  }
+  std::cout << std::endl;
+
+  std::cout << "cossin =" << std::endl;
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << cossin_[i] << std::endl;
+  }
+  std::cout << std::endl;
+ 
+  std::cout << "QxxInt =" << std::endl;
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << QxxInt_[i] << std::endl;
+  }
+  std::cout << std::endl;
+  
+  std::cout << "QyyInt_ =" << std::endl;
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << QyyInt_[i] << std::endl;
+  }
+  std::cout << std::endl;
+ 
+}
+

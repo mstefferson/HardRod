@@ -121,6 +121,7 @@ int main(){
   // Order parameters
   OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
   OPs.OPmaker(rho);
+  //OPs.printTrigs();
 
   std::cout << "C = " << std::endl;
   OPs.printC();
