@@ -84,15 +84,6 @@ int main(int argc, char *argv[]){
   rhoFTnext = rhoFT;
   Backward3.fftNormalized( rhoFTnext,rho );
  
-  //std::cout << "rhoFT" << std::endl << rhoFT;
-  /*
-   *RhoInit.PerturbReal(  params.Nx, params.Ny, params.Nm, 
-   *    params.pXmodes, params.pYmodes, params.pMmodes, kx, ky, km, x, y, phi,
-   *    params.PertrbAmp, rho );
-   *Forward3.fft(rho,rhoFT);
-   *rhoFTnext = rhoFT;
-   */
-  
  ShitIsFucked = CheckBrokenDen( params.Nx, params.Ny, params.Nm, rho, rhoMax );
   if( (ShitIsFucked == 1) ){ std::cout << "Broke from the start!" << std::endl;}
 
@@ -121,9 +112,12 @@ int main(int argc, char *argv[]){
 
   //Use Write Class
   
-  HRwriter FileWrite( params.Nx, params.Ny, params.trial, OPs.getC(), OPs.getPO(), OPs.getNO() );
+  HRwriter FileWrite( params.Nx, params.Ny, params.Nm, params.trial, OPs.getC(), OPs.getPO(), OPs.getNO(),
+       &( rho[params.Nx/2 + 1][params.Ny/2 + 1][0] ), 
+       &(rhoFT[0][0][2]), &(rhoFT[1][0][2]), &(rhoFT[0][1][2]), &(rhoFT[1][1][2]) );
   FileWrite.writeOP();
-  FileWrite.writeRho(rho);
+  FileWrite.writeParams(params);
+  //FileWrite.writeRho(rho);
   recCounter = 1;
  
   // First Step
@@ -184,7 +178,7 @@ int main(int argc, char *argv[]){
         std::cout << "t/t_end = " << (double) t/time.getNt()  << std::endl; 
         
         OPs.OPmaker(rho);
-        FileWrite.writeRho(rho);
+    //    FileWrite.writeRho(rho);
         FileWrite.writeOP();
 
         ShitIsFucked = CheckBrokenDen( params.Nx, params.Ny, params.Nm, rho, rhoMax );

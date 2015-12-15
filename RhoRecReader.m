@@ -5,12 +5,12 @@ Nm   = 64;
 Nrec = 11;
 
 filename = 'DiffOutFT.txt';
-%DiffImp = importdata(filename);
+DiffImp = importdata(filename);
 %DiffImp = importdata(filename);
 
 
-fidi = fopen( filename );
-data = textscan(fidi, '%s%s', 'Delimiter',',');
+% fidi = fopen( filename );
+% data = textscan(fidi, '%s%s', 'Delimiter',',');
 DiffRec = zeros(Nx,Ny,Nm,11);
 
 for t = 1:Nrec

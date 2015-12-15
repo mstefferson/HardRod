@@ -2,11 +2,14 @@
 
 #include "HRwriter.h"
 
-HRwriter::HRwriter(int Nx, int Ny, int trial, double** C, double** PO, double** NO){
+HRwriter::HRwriter(int Nx, int Ny, int Nm, int trial, double** C, double** PO, double** NO, 
+    double* rhoFix, Complex* rhoFtFix1, Complex* rhoFtFix2, Complex* rhoFtFix3, Complex* rhoFtFix4){
 
   Nx_ = Nx;
   Ny_ = Ny;
+  Nm_ = Nm;
   trial_ =  trial;
+  recNum_ = 0;
 
   cTl_ << "Conc" << trial << ".txt";
   pTl_ << "PO" << trial << ".txt";
@@ -14,11 +17,17 @@ HRwriter::HRwriter(int Nx, int Ny, int trial, double** C, double** PO, double** 
   rhoTl_ << "Rho" << trial << ".txt";
   ampTl_ << "Amp" << trial << ".txt";
   paramsTl_ << "Params" << trial << ".txt";
+  distTl_ << "Dist" << trial << ".txt";
   //cTl_ = "Conc" + std::to_string(trial) + ".txt";
 
   C_ = C;
   PO_ = PO;
   NO_ = NO;
+  rhoFixP_   = rhoFix;
+  rhoFtFix1_ = rhoFtFix1;
+  rhoFtFix2_ = rhoFtFix2;
+  rhoFtFix3_ = rhoFtFix3;
+  rhoFtFix4_ = rhoFtFix4;
 
   openFiles();
 }
@@ -31,16 +40,20 @@ void HRwriter::openFiles(){
   rhoFile_.open( ( rhoTl_.str() ).c_str() );
   ampFile_.open( ( ampTl_.str() ).c_str() );
   paramsFile_.open( ( paramsTl_.str() ).c_str() );
+  distFile_.open( ( distTl_.str() ).c_str() );
 
 }
 
 void HRwriter::closeFiles(){
 
+  paramsFile_ << recNum_;
+  
   concFile_.close();
   poFile_.close();
   noFile_.close();
   rhoFile_.close();
   ampFile_.close();
+  distFile_.close();
   paramsFile_.close();
 
 }
@@ -50,7 +63,9 @@ void HRwriter::writeOP(){
   writeC();
   writeNO();
   writePO();
-
+  writeDist();
+  writeAmp();
+  recNum_ ++;
 }
 
 void HRwriter::writeC(){
@@ -86,10 +101,31 @@ void HRwriter::writeNO(){
   noFile_ << std::endl;
 }
 
-void HRwriter::writeAmp(Ac3 &rhoFT){
+void HRwriter::writeDist(){
 
-  ampFile_ << rhoFT[0][0][2].real() << "\t";
-  ampFile_ << rhoFT[0][0][2].imag() << "\t";
+  for( int i = 0; i < Nm_ ; i++ ){
+    distFile_ << rhoFixP_[i] << std::endl;
+  }
+  distFile_ << std::endl;
+
+}
+
+
+void HRwriter::writeAmp( ){
+
+
+  ampFile_ << (*rhoFtFix1_).real() << "\t";
+  ampFile_ << (*rhoFtFix1_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix2_).real() << "\t";
+  ampFile_ << (*rhoFtFix2_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix3_).real() << "\t";
+  ampFile_ << (*rhoFtFix3_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix4_).real() << "\t";
+  ampFile_ << (*rhoFtFix4_).imag() << "\t";
+
 /*
  *  ampFile_ << rhoFT[1][0][2].real << "\t";
  *  ampFile_ << rhoFT[1][0][2].imag << "\t";
