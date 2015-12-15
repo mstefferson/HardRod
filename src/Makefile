@@ -1,8 +1,9 @@
 # define compiler
-CC = g++
+CC = g++-5
 # define compile time flags
 #CFLAGS = -g3 -Wall -fopenmp -g -DDEBUG
-CFLAGS = -fopenmp -O3
+CFLAGS = -fopenmp -O3 -std=c++11
+#CFLAGS = -fopenmp -O3 
 # define any directories over than /usr/include/ containing header files
 CINCLUDES = -I/usr/local/include -I . -I/usr/local/include/yaml-cpp
 # define libraries paths over than /usr/include
@@ -18,7 +19,8 @@ CXXFLAGS = $(CFLAGS)
 
 OBJS = HardRodMain.o fftw++.o spGrid.o tGrid.o Propagator.o Ml3dPrint2Screen.o 
 OBJS +=	ParseParams.o MayerFncHardRod.o EqDist.o Rho3DMaker.o NlHardRodDr.o CheckBrokenDen.o
-OBJS += OPclass.o
+OBJS += OPclass.o HRwriter.o
+#OBJS += OPclass.o
 
 MAIN = ../diffuse.exe
 

@@ -104,14 +104,9 @@ void OPclass::NemOrdCalc(Ad3& rho){
 
         for( int k = 0; k < Nm_; k++ ){
 
-          //QxxTemp_ = QxxTemp_ + rho[i][j][k] *  coscos_[k] - rho[i][j][k] * 1/2 ;
           QxxTemp_ = QxxTemp_ + rho[i][j][k] *  QxxInt_[k] ;
-
-          //QxxTemp_ += rho[i][j][k] * ( coscos_[k]  );
           QxyTemp_ =  QxyTemp_ + rho[i][j][k] * cossin_[k];
-          //QyyTemp_ =  QyyTemp_ + rho[i][j][k] *  sinsin_[k] - rho[i][j][k] * 1/2 ;
           QyyTemp_ =  QyyTemp_ + rho[i][j][k] *  QyyInt_[k] ;
-          //QyyTemp_ += rho[i][j][k] * ( sinsin_[k]  );
 
           //std::cout << coscos_[k] << " ";
         }
@@ -124,15 +119,7 @@ void OPclass::NemOrdCalc(Ad3& rho){
         NO_[i][j] = ( ( QxxTemp_ + QyyTemp_ )  + 
         sqrt( ( ( QxxTemp_ - QyyTemp_ ) * ( QxxTemp_ - QyyTemp_ ) )  + 
             4 * QxyTemp_ * QxyTemp_ ) ) / C_[i][j];
-        if( (i == Nx_ - 1) && (j == Ny_ - 1) ){
-          std::cout << "Qxx = " << QxxTemp_ << std::endl;
-          std::cout << "Qxx/C = " << QxxTemp_/C_[i][j] << std::endl;
-          std::cout << "Qxy = " << QxyTemp_ << std::endl;
-          std::cout << "Qyy = " << QyyTemp_ << std::endl;
-          std::cout << "Nij = " << NO_[i][j] << std::endl;
-          std::cout << "rhoij0 = " << rho[i][j][0] << std::endl;
-        }
-      }
+     }
     }
   }
 
@@ -201,3 +188,7 @@ void OPclass::printTrigs(){
  
 }
 
+
+double** OPclass::getC(){return C_;}
+double** OPclass::getNO(){return NO_;}
+double** OPclass::getPO(){return PO_;}

@@ -1,5 +1,8 @@
 // OPclass.h
 
+#ifndef _HARDROD_OPCLASS_H_
+#define _HARDROD_OPCLASS_H_
+
 #include <math.h>
 #include "Array.h"
 #include "typedef.h"
@@ -43,4 +46,10 @@ class OPclass{
     void printPO();
     void printNO();
     void printTrigs();
+    double** getC();
+    double** getNO();
+    double** getPO();
+
 };
+
+#endif 

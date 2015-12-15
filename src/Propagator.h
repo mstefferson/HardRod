@@ -1,6 +1,6 @@
 // Propagate.h
-#ifndef _DIFFUSEFT_LOP_H
-#define _DIFFUSEFT_LOP_H
+#ifndef _HARDROD_PROPAGATE_H_
+#define _HARDROD_PROPAGATE_H_
 #include <iostream>
 #include <math.h>
 #include "Array.h"

@@ -6,20 +6,25 @@
 
 #include "HardRodMain.h"
 
-int main(){
+int main(int argc, char *argv[]){
   
   fftwpp::fftw::maxthreads=get_max_threads(); //Multithreads for fft
  
   //Size of vectors to fft
   size_t align=sizeof(Complex); //Complex defined in fftw.h std::complex<double>
 
+  // Read input file
+  std::string Inpt = argv[1];
+
   //Parse parameters
   system_params params;
   params.init();
   std::string ParamsFile;
-  ParamsFile = "Params.yaml"; // Should be an input
-  parse_params(ParamsFile, params);
   
+  //ParamsFile = "Params.yaml"; // Should be an input
+  ParamsFile = Inpt + ".yaml"; // Should be an input
+  parse_params(ParamsFile, params);
+ 
   // Other variables
   double c = params.bc * M_PI / ( params.Lrod * params.Lrod );
   double rhoMax = 10 * c * params.Nx * params.Ny;
@@ -35,7 +40,7 @@ int main(){
   Ad1 fint( params.Nm,align);
   Ac1 fintFT( Nkm,align);
 
-  // Mayer Fnc
+  // Mayer 
   Ad3 Fm( params.Nx, params.Ny, params.Nm, align );
   Ac3 FmFT( params.Nx, params.Ny, Nkm, align );
 
@@ -59,15 +64,9 @@ int main(){
   spGrid Gridx(params.Nx,params.Lx), Gridy(params.Ny,params.Ly), Gridphi(params.Nm, 2*M_PI);
   spGrid GridGen;
   double*  kx =  Gridx.getKft();
-  double*  x =  Gridx.getPos();
-//  Gridx.print();
   double*  ky =  Gridy.getKft();
-  double*  y =  Gridy.getPos();
-  //Gridy.print();
   double*  km =  Gridphi.getKpos();
   double*  phi =  Gridphi.getPos();
-  //Gridphi.print();
-
 
   // Initial Densities
 
@@ -96,11 +95,6 @@ int main(){
   
  ShitIsFucked = CheckBrokenDen( params.Nx, params.Ny, params.Nm, rho, rhoMax );
   if( (ShitIsFucked == 1) ){ std::cout << "Broke from the start!" << std::endl;}
- /*
-  * 
-  *std::cout << "rho =" << std::endl << rho << std::endl;
-  *std::cout << "rhoFT" << std::endl << rhoFT << std::endl;
-  */
 
   // Propagator
   Propagator DiffP( params.Nx, params.Ny, Nkm, kx, ky, km, 
@@ -121,45 +115,17 @@ int main(){
   // Order parameters
   OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
   OPs.OPmaker(rho);
-  //OPs.printTrigs();
-
-  std::cout << "C = " << std::endl;
-  OPs.printC();
-  std::cout << "PO = " << std::endl;
-  OPs.printPO();
-  std::cout << "NO = " << std::endl;
-  OPs.printNO();
-    
-
-//// Let program know where we are
+  // Let program know where we are
   std::cout << "Initialized all variables " << std::endl;
+  
 
-  //std::cout << "Nl t =0" << std::endl << NlFT << std::endl;
-  //std::cout << "Fm" << std::endl << Fm << std::endl;
-
-  /*
-   *std::cout << "NlFT" << std::endl;
-   *for( int k = 0; k < Nkm; ++k ) {
-   *  for( int i = 0; i < params.Nx; ++i ) {
-   *    for( int j = 0; j < params.Ny; ++j) {
-   *      std::cout << NlFT[i][j][k] << "\t";
-   *    }
-   *    std::cout << std::endl;
-   *  }
-   *  std::cout << std::endl << std::endl;
-   *}
-   */
-
-  //std::cout << "FmFT" << std::endl << FmFT << std::endl;
-
-  // Write to file
-  std::ofstream diffFile;
-  diffFile.open ("DiffOut.txt");
-  std::cout << "t = 0" << std::endl;
-  diffFile << rho << std::endl;
+  //Use Write Class
+  
+  HRwriter FileWrite( params.Nx, params.Ny, params.trial, OPs.getC(), OPs.getPO(), OPs.getNO() );
+  FileWrite.writeOP();
+  FileWrite.writeRho(rho);
   recCounter = 1;
  
-
   // First Step
   if( (params.IsoDiffFlag == 1) ){
     switch(params.ABFlag){
@@ -216,14 +182,20 @@ int main(){
       {
         recCounter++;
         std::cout << "t/t_end = " << (double) t/time.getNt()  << std::endl; 
-        diffFile << rho << std::endl;
+        
+        OPs.OPmaker(rho);
+        FileWrite.writeRho(rho);
+        FileWrite.writeOP();
+
         ShitIsFucked = CheckBrokenDen( params.Nx, params.Ny, params.Nm, rho, rhoMax );
         if( (ShitIsFucked == 1) ){ std::cout << "Broke!" << std::endl; break; }
       } // recording
     } // time loop 
   } // if didn't start broken
 
-  diffFile.close();
+  std::cout << "done running" << std::endl;
+  FileWrite.closeFiles();
+
   std::cout << "Nrec = " << time.getNrec() + 1 << std::endl;
   std::cout << "Rec Counter = " << recCounter << std::endl;
   return 0;

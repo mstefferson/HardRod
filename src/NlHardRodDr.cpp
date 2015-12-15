@@ -8,8 +8,8 @@ NlHardRodDr::NlHardRodDr(int Nx, int Ny, int Nm, double* kx, double* ky, double*
   Nkm_ = Nm / 2 + 1;
   
   ConvCoeff_ = 2 * M_PI * Lx * Ly / (Nx * Ny * Nm) ;
-
-  i_ = 1i;
+ 
+  Complex i_(0,1);
 
   IntFlag_ = 1;
   IsoDiffFlag_ = 0;

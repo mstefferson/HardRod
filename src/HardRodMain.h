@@ -20,5 +20,6 @@
 #include "typedef.h"
 #include "CheckBrokenDen.h"
 #include "OPclass.h"
+#include "HRwriter.h"
 
 #endif //_HARDROD_HARDROD_H_

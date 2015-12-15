@@ -1,5 +1,8 @@
 // NlHardRodDr.h
 
+#ifndef _HARDROD_NLHARDRODDR_H_
+#define _HARDROD_NLHARDRODDR_H_
+
 #include <cstdlib>
 #include <math.h>
 #include <complex>
@@ -15,8 +18,7 @@ class NlHardRodDr{
     int Ny_;
     int Nm_;
     int Nkm_;
-    Complex i_;
-
+    
     bool IntFlag_;
     bool IsoDiffFlag_;
 
@@ -45,3 +47,5 @@ class NlHardRodDr{
 
     // NL calc
 };
+
+#endif
