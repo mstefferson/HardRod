@@ -5,8 +5,18 @@ trial = ParamFile(1);
 Nx   = ParamFile(2);
 Ny   = ParamFile(3);
 Nm   = ParamFile(4);
+Lx   = ParamFile(13);
+Ly   = ParamFile(14);
+ 
 trec = ParamFile(9);
-Nrec = ParamFile(19);
+Nrec =  ParamFile(19);
+bc   =   ParamFile(11);
+vD   =   ParamFile(12);
+
+TimeRec = [0:Nrec-1]*trec;
+x = [0:Nx-1] * Lx / Nx;
+y = [0:Ny-1] * Ly / Ny;
+phi = [0:Nm-1] * 2 * pi / Nm;
 
 ConcSt = sprintf('Conc%d.txt',trial);
 PoSt   = sprintf('PO%d.txt',trial);
@@ -50,6 +60,10 @@ for t = 1:Nrec
         end
     end
 end
+
+ampPlotterFT(RhoFTRec, TimeRec, Nx, Ny, Nm, bc, vD,SaveMe,trial);
+OPMovieMakerTgtherAvi(trial,x,y,phi,ConcRec,NoRec,PoRec,DistRec,TimeRec);
+
 
 
 
