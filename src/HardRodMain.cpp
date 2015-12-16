@@ -114,6 +114,7 @@ int main(int argc, char *argv[]){
   
   HRwriter FileWrite( params.Nx, params.Ny, params.Nm, params.trial, OPs.getC(), OPs.getPO(), OPs.getNO(),
        &( rho[params.Nx/2 + 1][params.Ny/2 + 1][0] ), 
+       &(rhoFT[0][0][1]), &(rhoFT[1][0][1]), &(rhoFT[0][1][1]), &(rhoFT[1][1][1]),
        &(rhoFT[0][0][2]), &(rhoFT[1][0][2]), &(rhoFT[0][1][2]), &(rhoFT[1][1][2]) );
   FileWrite.writeOP();
   FileWrite.writeParams(params);

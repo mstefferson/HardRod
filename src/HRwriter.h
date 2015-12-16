@@ -44,11 +44,16 @@ class HRwriter{
     Complex* rhoFtFix2_;
     Complex* rhoFtFix3_;
     Complex* rhoFtFix4_;
+    Complex* rhoFtFix5_;
+    Complex* rhoFtFix6_;
+    Complex* rhoFtFix7_;
+    Complex* rhoFtFix8_;
 
   public:
     
-    HRwriter(int Nx, int Ny, int Nm, int trial, double** C, double** PO, double** NO, 
-      double* rhoFix, Complex* rhoFtfix1, Complex* rhoFtfix2, Complex* rhoFtfix3, Complex* rhoFtfix4);
+    HRwriter(int N, int Ny, int Nm, int trial, double** C, double** PO, double** NO, double* rhoFix, 
+        Complex* rhoFtfix1, Complex* rhoFtfix2, Complex* rhoFtfix3, Complex* rhoFtfix4, 
+        Complex* rhoFtfix5, Complex* rhoFtfix6, Complex* rhoFtfix7, Complex* rhoFtfix8);
     void openFiles();
     void writeOP();
     void writeC();

@@ -24,17 +24,20 @@ ConcRec   = zeros(Nx,Ny,Nrec);
 NoRec     = zeros(Nx,Ny,Nrec);
 PoRec     = zeros(Nx,Ny,Nrec);
 DistRec   = zeros(Nm,Nrec);
-RhoFTRec1 = zeros(1,Nrec);
-RhoFTRec2 = zeros(1,Nrec);
-RhoFTRec3 = zeros(1,Nrec);
-RhoFTRec4 = zeros(1,Nrec);
+
+RhoFTRec  = zeros(8,Nrec);
 
 
 for t = 1:Nrec
-   RhoFTRec1(t) = FTampFile(t,1) + sqrt(-1) * FTampFile(t,2);
-   RhoFTRec2(t) = FTampFile(t,3) + sqrt(-1) * FTampFile(t,4);
-   RhoFTRec3(t) = FTampFile(t,5) + sqrt(-1) * FTampFile(t,6);
-   RhoFTRec4(t) = FTampFile(t,7) + sqrt(-1) * FTampFile(t,8);
+   RhoFTRec(1,t) = FTampFile(t,1) + sqrt(-1) * FTampFile(t,2);
+   RhoFTRec(2,t) = FTampFile(t,3) + sqrt(-1) * FTampFile(t,4);
+   RhoFTRec(3,t) = FTampFile(t,5) + sqrt(-1) * FTampFile(t,6);
+   RhoFTRec(4,t) = FTampFile(t,7) + sqrt(-1) * FTampFile(t,8);
+   RhoFTRec(5,t) = FTampFile(t,9) + sqrt(-1) * FTampFile(t,10);
+   RhoFTRec(6,t) = FTampFile(t,11) + sqrt(-1) * FTampFile(t,12);
+   RhoFTRec(7,t) = FTampFile(t,13) + sqrt(-1) * FTampFile(t,14);
+   RhoFTRec(8,t) = FTampFile(t,14) + sqrt(-1) * FTampFile(t,16);
+
    DistRec(:,t) = DistFile( (t-1) * Nm + 1 : (t-1) * Nm + Nm );
    
     for i = 1:Nx 

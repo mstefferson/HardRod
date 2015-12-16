@@ -2,8 +2,9 @@
 
 #include "HRwriter.h"
 
-HRwriter::HRwriter(int Nx, int Ny, int Nm, int trial, double** C, double** PO, double** NO, 
-    double* rhoFix, Complex* rhoFtFix1, Complex* rhoFtFix2, Complex* rhoFtFix3, Complex* rhoFtFix4){
+HRwriter::HRwriter(int Nx, int Ny, int Nm, int trial, double** C, double** PO, double** NO, double* rhoFix, 
+     Complex* rhoFtFix1, Complex* rhoFtFix2, Complex* rhoFtFix3, Complex* rhoFtFix4,
+     Complex* rhoFtFix5, Complex* rhoFtFix6, Complex* rhoFtFix7, Complex* rhoFtFix8){
 
   Nx_ = Nx;
   Ny_ = Ny;
@@ -28,6 +29,10 @@ HRwriter::HRwriter(int Nx, int Ny, int Nm, int trial, double** C, double** PO, d
   rhoFtFix2_ = rhoFtFix2;
   rhoFtFix3_ = rhoFtFix3;
   rhoFtFix4_ = rhoFtFix4;
+  rhoFtFix5_ = rhoFtFix5;
+  rhoFtFix6_ = rhoFtFix6;
+  rhoFtFix7_ = rhoFtFix7;
+  rhoFtFix8_ = rhoFtFix8;
 
   openFiles();
 }
@@ -125,6 +130,18 @@ void HRwriter::writeAmp( ){
 
   ampFile_ << (*rhoFtFix4_).real() << "\t";
   ampFile_ << (*rhoFtFix4_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix5_).real() << "\t";
+  ampFile_ << (*rhoFtFix5_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix6_).real() << "\t";
+  ampFile_ << (*rhoFtFix6_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix7_).real() << "\t";
+  ampFile_ << (*rhoFtFix7_).imag() << "\t";
+
+  ampFile_ << (*rhoFtFix8_).real() << "\t";
+  ampFile_ << (*rhoFtFix8_).imag() << "\t";
 
 /*
  *  ampFile_ << rhoFT[1][0][2].real << "\t";
