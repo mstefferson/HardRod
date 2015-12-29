@@ -6,15 +6,21 @@
 #include <iostream>
 #include <cstdlib>
 #include <math.h>
+#include <algorithm>
 #include "spGrid.h"
 #include "Array.h"
+#include "typedef.h"
 
 class EqDist{
 
   private:
-    int N_; // Number of gridpoints
+    int Nm_; // Number of gridpoints
     int Nc_; // Number of Coeff
     double bc_; // scaled concentration
+    bool DEBUG_;
+
+    double* Coeff_;
+    double* d2nVec_;
     double* phi_;
     double* feq_; // equilbrium distribution
     double* fis_; // isotropic ditribution
@@ -24,14 +30,24 @@ class EqDist{
     EqDist();
     EqDist(int N, double bc);
 
-    double trapz(double* f, double* x, int N);
-    double trapz_periodic(double* f, double* x, int N);
-    void fisInit( int N, double* fis );
-    void fisArrayInit( int N, Array::array1<double> &fis );
-    void feqInit( int N, double bc, double *f); 
-    void KernCoeffCalcHardRod2D( double* d2nVec, int Nc );
-    void BestCoeffExpLeg2D( double* Coeff, int Nc, double* phi, double* bc );
+    double trapz_periodicPhi(const double f[]  );
+    void Normalize(double f[]);
+    void bcFix();
+    
+    void fisInit( );
+    void feqInit();
+    
+    void fisInit( Ad1 &fint );
+    void feqInit( Ad1 &fint); 
+    
+    void KernCoeffCalcHardRod2D( );
+    void BestCoeffExpLeg2D( );
+    void DistBuilderExpCos2Dsing();
+    double MaxMagElement(double v[], int size);
+
     double* getfisVec();
+    void printFis();
+    void printFeq();
 
 };
 

@@ -3,52 +3,78 @@
 
 EqDist::EqDist(){
   
-  int N_ = 0; // Number of gridpoints
-  int Nc_ = 0; // Number of Coeff
-  double bc_ = 0.0; // scaled concentration
+  Nm_ = 0; // Number of gridpoints
+  Nc_ = 0; // Number of Coeff
+  bc_ = 0.0; // scaled concentration
   
   phi_ = NULL;
   fis_ = NULL;
   feq_ = NULL; // equilbrium distribution
+  Coeff_ = NULL;
+  d2nVec_ = NULL;
 
 }
 
-EqDist::EqDist(int N, double bc){
+EqDist::EqDist(int Nm, double bc){
 
-  int N_ = N; // Number of gridpoints
-  int Nc_ = 10; // Number of Coeff
-  double bc_ = bc; // scaled concentration
+  DEBUG_ = true;
+
+  Nm_ = Nm; // Number of gridpoints
+  Nc_ = 10; // Number of Coeff
+  bc_ = bc; // scaled concentration
   
+  std::cout << "Initializing vectors" << std::endl;
   spGrid phi;
-  phi_ = new double[N_];
-  phi.xVecMaker(N_,2*M_PI,phi_);
+  phi_ = new double[Nm_];
+  phi.xVecMaker(Nm_, 2*M_PI,phi_);
 
-  fis_ = new double[N_];
+  fis_ = new double[Nm_];  //Isotropic
+  feq_ = new double[Nm_];  //Equilibrium
+  Coeff_ = new double[Nc_]; // Vector of coeff an, exp[ sum an cos ( 2n phi ) ]
+  d2nVec_ = new double[Nc_]; // Kernal
+
+ 
+  feqInit(); // Equilbrium
+  fisInit(); // isotropic 
+}
+
+void EqDist::fisInit( ){
+ 
+  for( int i = 0; i < Nm_; ++i ){
+    fis_[i] = 1 / (2 * M_PI);
+  }
+
+}
+
+void EqDist::feqInit( ){
+
+  // Fix bc if it's too close to 1.5
+  bcFix();
+ 
+ // Build Kernal
+  KernCoeffCalcHardRod2D();
   
-  double* feq_ = NULL; // equilbrium distribution
-  fisInit(N_,fis_); // isotropic 
+  // Build Coeff
+  BestCoeffExpLeg2D();
+
+  // Build Eq
+  DistBuilderExpCos2Dsing();
+
 }
 
-
-void EqDist::fisInit( int N, double* fis ){
+void EqDist::fisInit( Ad1 &f ){
  
-  for( int i = 0; i < N; ++i ){
-    fis[i] = 1 / (2 * M_PI);
+  for( int i = 0; i < Nm_; ++i ){
+    f[i] = fis_[i];
   }
 
 }
 
-void EqDist::fisArrayInit( int N, Array::array1<double> &fis ){
- 
-  for( int i = 0; i < N; ++i ){
-    fis[i] = 1 / (2 * M_PI);
+void EqDist::feqInit( Ad1 &f ){
+
+  for( int i = 0; i < Nm_; ++i ){
+    f[i] = feq_[i];
   }
-
-}
-
-void EqDist::feqInit( int N, double bc, double *f ){
-
-  std::cout << " Not written yet " << std::endl;
 
 }
 
@@ -58,64 +84,206 @@ void EqDist::feqInit( int N, double bc, double *f ){
 // |sin \gamma| for a 2d hard rod interactions.
 
 
-void EqDist::KernCoeffCalcHardRod2D( double* d2nVec, int Nc ){
+void EqDist::KernCoeffCalcHardRod2D( ){
 
-// Build a vector of the kernal's coefficients.
+  // Build a vector of the kernal's coefficients.
 
-for( int n = 0; n < Nc; ++n){
-    d2nVec[n] = 4 / ( M_PI * ( 4* ( n - 1) * (n - 1) - 1) );
+  for( int n = 0; n < Nc_; n++){
+      d2nVec_[n] = 4 / ( M_PI * ( 4* ( n - 1) * (n - 1) - 1) );
+  }
+
+  if( DEBUG_){
+    std::cout << "Kernal = " << std::endl;
+    for( int n = 0; n < Nc_; n++ ){
+      std::cout << d2nVec_[n] << std::endl;
+    }
+  }
+
 }
 
+//Algorithm doesn't converge for bc too close to 1.5
+void EqDist::bcFix(){
+
+  if( (bc_ > 1.499) && (bc_ < 1.501) ){
+      bc_  = 1.499;
+  }
+
+  if( DEBUG_ ) { std::cout << "bc_= " << bc_ << std::endl; }
+
 }
 
-void EqDist::BestCoeffExpLeg2D( double* Coeff, int Nc, double* phi, double* bc ){
+// CoeffCalcExpLeg2D.m
+// Michael Stefferson
+//
+// Calculates the coefficients for a 2D distribution of the form
+// f(\theta) = exp( \sum a_2n cos(2*n*\theta) ) / Z
+// Inputs:
+// Nc: Number of max coefficients
+// x : spatial coordin. vector. x = cos(\theta)
 
-  std::cout << " Not written yet " << std::endl;
+void EqDist::BestCoeffExpLeg2D( ){
+  
+  
+  // Make the first guess not zero. Iteration gets stuck
+  double ExpCosSum[Nm_];
+  double CosExpCos[Nm_];
+  double CoeffTemp[Nc_];
+  double Coeff_[Nc_];
+
+
+  // for while loop. How much coefficient need to be changing by
+  // before stopping
+  double epsilon = 1e-12;
+  
+  //Integral Stuff
+  double NormEc;
+  double NormCeC;
+
+  // Make initial guess for the coeff the previous coeff.
+  CoeffTemp[0] = 1;
+  Coeff_[0] = rand();
+  for(int i = 1; i < Nc_ ; i++){
+
+    CoeffTemp[i] = 1;
+    Coeff_[i]    = 0;
+    
+  }
+
+  // Iterate the coefficients
+  
+  int counter = 0;
+  double MaxElement;
+  double delta[Nm_];
+
+ 
+  MaxElement = 10.0;
+
+  while( MaxElement > epsilon ){       
+
+    for( int i = 0; i < Nm_ ; i++ ) {
+        CoeffTemp[i] = Coeff_[i];
+      }
+      
+      for( int j = 0; j < Nm_; j++ ){
+        ExpCosSum[j] = 1.0 ;
+        // Sum over all the Legendre polynomials
+        for( int n = 0; n < Nc_; n++ ){
+          ExpCosSum[j] *= exp( CoeffTemp[n] * cos( 2.0 * (n + 1.0) * phi_[j] ) );
+        }
+      }
+
+      for( int n = 0; n < Nc_; n++ ){
+        
+           for( int j = 0; j < Nm_; j++ ){
+              CosExpCos[j] += cos( 2.0 * (n + 1) * phi_[j] ) * ExpCosSum[j];
+           }
+
+           NormCeC = trapz_periodicPhi(CosExpCos);
+           NormEc  = trapz_periodicPhi(ExpCosSum);
+           Coeff_[n] = M_PI * bc_ * d2nVec_[n] * NormCeC / NormEc;
+
+      }
+      
+      counter += 1;
+
+    for( int i = 0; i < Nm_; i++ ){
+      delta[i] = Coeff_[i] - CoeffTemp[i];
+    }
+ 
+    MaxElement = MaxMagElement(delta,Nm_);    
+    } // end while
+}
+
+void EqDist::DistBuilderExpCos2Dsing(){
+  
+  for( int n = 0; n < Nc_; n++ ){
+    for( int j = 0; j < Nm_; j++ ){
+      
+      feq_[j]  *=  exp( Coeff_[n] * cos(2.0 * (n+1) * phi_[j] ) );    
+
+    }
+  }
+
+  // Normalize it again to be safe.
+  Normalize(feq_);
 
 }
 
 // trapezoid integration
 // Adds another point from final point to initial for periodic fnc
-double EqDist::trapz_periodic(double* f, double* x, int N){
 
-  double Intgral = 0.0;
+void EqDist::Normalize( double f[] ){
   
-  Intgral += f[0];
+  double Norm;
+  Norm =  trapz_periodicPhi(f);
 
-  for( int i = 1; i < N ; ++i ){
-
-    Intgral += f[i];
+  for(int i = 0; i < Nm_; ++i ) {
+    
+    f[i] = f[i] / Norm;
 
   }
-  
-  Intgral = ( x[N-1] - x[0] ) / (N) * Intgral;
-
-  return Intgral;
-
 }
 
-// trapezoid integration
-double EqDist::trapz(double* f, double* x, int N){
+
+double EqDist::trapz_periodicPhi(const double f[]){
 
   double Intgral = 0.0;
   
-  Intgral += f[0];
-
-  for( int i = 1; i < (N - 1); ++i ){
+  for( int i = 0; i < Nm_ ; ++i ){
 
     Intgral += 2 * f[i];
 
   }
-
-  Intgral += f[N-1];
-
-  Intgral = ( x[N-1] - x[0] ) / (2*N) * Intgral;
+  
+  Intgral =  2 * M_PI / Nm_ * Intgral;
 
   return Intgral;
 
 }
-
   
+double EqDist::MaxMagElement(double v[], int size){
+  
+  double Max = 0.0;
+  double Temp;
+  
+  for( int i = 0; i < size; i++ ){
+    
+    Temp = v[i] * v[i];
+
+    if( Temp > Max * Max ){
+      Max = Temp;
+    }
+
+  }
+
+  return Max;
+
+}
+      
+void EqDist::printFis(){
+
+  std::cout << "fis= " << std::endl;
+
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << fis_[i] << std::endl;
+  }
+
+  std::cout << std::endl;
+
+}
+
+void EqDist::printFeq(){
+
+  std::cout << "feq= " << std::endl;
+
+  for( int i = 0; i < Nm_; i++ ){
+    std::cout << feq_[i] << std::endl;
+  }
+
+  std::cout << std::endl;
+
+}
+
 double* EqDist::getfisVec(){return fis_;}
 
 
