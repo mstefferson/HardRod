@@ -8,10 +8,10 @@
 
 int main(int argc, char *argv[]){
   
-  fftwpp::fftw::maxthreads=get_max_threads(); //Multithreads for fft
+  fftwpp::fftw::maxthreads = get_max_threads(); //Multithreads for fft
  
   //Size of vectors to fft
-  size_t align=sizeof(Complex); //Complex defined in fftw.h std::complex<double>
+  size_t aligni = sizeof(Complex); //Complex defined in fftw.h std::complex<double>
 
   // Read input file
   std::string Inpt = argv[1];
@@ -37,8 +37,8 @@ int main(int argc, char *argv[]){
   Ac3 rhoFT( params.Nx, params.Ny, Nkm, align);
   Ac3 rhoFTnext( params.Nx, params.Ny, Nkm, align );
   
-  Ad1 fint( params.Nm,align);
-  Ac1 fintFT( Nkm,align);
+  Ad1 fint( params.Nm, align);
+  Ac1 fintFT( Nkm, align);
 
   // Mayer 
   Ad3 Fm( params.Nx, params.Ny, params.Nm, align );
@@ -69,14 +69,19 @@ int main(int argc, char *argv[]){
   double*  phi =  Gridphi.getPos();
 
   // Initial Densities
+  std::cout << "In main, going to initialize densities" << std::endl;
+
 
   // Distribution
   EqDist EqVar(params.Nm,params.bc);
-  EqVar.fisArrayInit(params.Nm, fint);
+  EqVar.printFis();
+  EqVar.printFeq();
+  EqVar.fisInit(fint);
+
   // Build the density matrix
   Rho3DMaker RhoInit;
   RhoInit.BuilderEq( params.Nx, params.Ny, params.Nm,params.Lx, params.Ly, 
-      c, rho, fint) ;
+      c, rho, fint);
   
   Forward3.fft(rho,rhoFT);
   RhoInit.Perturb(params.Nx, params.Ny, params.Nm, 

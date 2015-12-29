@@ -17,7 +17,10 @@ class Rho3DMaker{
     void BuilderEq( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
         Array::array3<double> &rho, Array::array1<double> &f );
     
-    void BuilderIs( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
+    void BuilderEq( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
+        Array::array3<double> &rho, double f[] );
+    
+     void BuilderIs( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
         Array::array3<double> &rho );
     
 /*    void BuilderEqFT( int Nx, int Ny, int Nm, int Nkm, double Lx, double Ly, double c, 

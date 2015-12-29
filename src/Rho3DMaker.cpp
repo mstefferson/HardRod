@@ -17,6 +17,21 @@ void Rho3DMaker::BuilderEq( int Nx, int Ny, int Nm, double Lx, double Ly, double
   }
 }
 
+void Rho3DMaker::BuilderEq( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
+        Array::array3<double> &rho, double f[] ){
+
+
+  for(int i  = 0; i < Nx; ++i){
+    for(int j = 0; j < Ny; ++j){
+      for(int k =0; k < Nm; ++k){
+
+        rho[i][j][k] = c * f[k];
+
+      }
+    }
+  }
+}
+
 
 void Rho3DMaker::BuilderIs( int Nx, int Ny, int Nm, double Lx, double Ly, double c, 
         Array::array3<double> &rho ){

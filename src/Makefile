@@ -1,8 +1,8 @@
 # define compiler
 CC = g++-5
 # define compile time flags
-#CFLAGS = -g3 -Wall -fopenmp -g -DDEBUG
-CFLAGS = -fopenmp -O3 -std=c++11
+CFLAGS = -g3 -Wall -fopenmp -g -DDEBUG
+#CFLAGS = -fopenmp -O3 -std=c++11
 #CFLAGS = -fopenmp -O3 
 # define any directories over than /usr/include/ containing header files
 CINCLUDES = -I/usr/local/include -I . -I/usr/local/include/yaml-cpp
