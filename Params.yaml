@@ -1,8 +1,8 @@
 seed : 2 
 trial : 4 
-Nx : 16
-Ny : 16
-Nm : 16
+Nx : 64
+Ny : 64
+Nm : 64
 pXmodes : 4 
 pYmodes : 4 
 pMmodes : 4 
@@ -12,8 +12,8 @@ EqIcFlag : 0
 RandPerbAmpFlag : 0 
 dt   : 0.001 
 trec : 0.1
-tend  : 1.0 
-bc : 1.0 
+tend : 1.0
+bc : 1.6 
 vD : 1.0          
 Lx : 10.0 
 Ly : 10.0 
