@@ -61,7 +61,7 @@ for t = 1:Nrec
     end
 end
 
-ampPlotterFT(RhoFTRec, TimeRec, Nx, Ny, Nm, bc, vD,SaveMe,trial);
+ampPlotterFT(RhoFTRec, TimeRec, Nx, Ny, Nm, bc, vD,trial);
 OPMovieMakerTgtherAvi(trial,x,y,phi,ConcRec,NoRec,PoRec,DistRec,TimeRec);
 
 
