@@ -1,4 +1,4 @@
-function ampPlotterFT(FTmat2plot, TimeRec, Nx, Ny, Nm, bc, vD,SaveMe,trial)
+function ampPlotterFT(FTmat2plot, TimeRec, Nx, Ny, Nm, bc, vD,trial)
 
 ParamStrNx = sprintf('Nx = %d', Nx);
 ParamStrNy = sprintf('Ny = %d', Ny);
@@ -71,8 +71,8 @@ title('Mode (1,1,2)')
 xlabel('Time')
 ylabel(Ax(1),' real Amp')
 
-if SaveMe
+ 
 figtl = sprintf('AmpFT%d',trial);
 savefig(gcf,figtl)
 saveas(gcf, figtl,'jpg')
-end
+
