@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
   fftwpp::fftw::maxthreads = get_max_threads(); //Multithreads for fft
  
   //Size of vectors to fft
-  size_t aligni = sizeof(Complex); //Complex defined in fftw.h std::complex<double>
+  size_t align = sizeof(Complex); //Complex defined in fftw.h std::complex<double>
 
   // Read input file
   std::string Inpt = argv[1];
@@ -74,9 +74,10 @@ int main(int argc, char *argv[]){
 
   // Distribution
   EqDist EqVar(params.Nm,params.bc);
-  EqVar.printFis();
-  EqVar.printFeq();
-  EqVar.fisInit(fint);
+  //EqVar.printFis();
+  //EqVar.printFeq();
+  //EqVar.fisInit(fint);
+  EqVar.feqInit(fint);
 
   // Build the density matrix
   Rho3DMaker RhoInit;
