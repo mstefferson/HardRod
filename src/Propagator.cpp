@@ -44,8 +44,8 @@ Propagator::Propagator( int N1, double* k1, double D, double dt, bool Iso)
 
 // 3D
 Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
-                         double D, double dt, bool Iso)
-{
+                         double D, double dt, bool Iso){
+
   IsoFlag_ = Iso;
   N1_ = N1;
   N2_ = N2;
@@ -72,8 +72,8 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
 }
 
 Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
-                         double Dpos, double Dr, double dt, bool Iso)
-{
+                         double Dpos, double Dr, double dt, bool Iso){
+
   IsoFlag_ = Iso;
   N1_ = N1;
   N2_ = N2;
@@ -88,6 +88,7 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
 
     LopIsoDiagMaker(k1, k2, k3, Dpos, Dr);
     PropIsoMaker3(dt);
+    PreFacInit();
   
   }
   else //not written
@@ -153,6 +154,48 @@ void Propagator::PropIsoMaker3(double dt)
  }
 }
 
+void Propagator::PreFacInit(){
+
+  switch(StepFlag_) {
+    case 0: // Diffusion
+      NlPf_ = 0;
+      NlPfPrev_ = 0;
+      NlPfExp_ = 0;
+      break;
+    case 1: // AB1
+      NlPf_ = dt_;
+      NlPfPrev_ = 0;
+      NlPfExp_ = 0;
+      break;
+    case 2: // AB2
+      NlPf_ = 3.0 * dt_ / 2.0;
+      NlPfPrev_ = dt_ / 2.0;
+      NlPfExp_ = 0;
+      break;
+    case 3: // HAB 1
+      NlPf_ = dt_;
+      NlPfPrev_ = 0;
+      NlPfExp_ = 0;
+      break;
+    case 4: // HAB 2
+      NlPf_ = 3.0 * dt_ / 2.0;
+      NlPfPrev_ = dt_ / 2.0;
+      NlPfExp_ = 0;
+      break;
+    case 5:  // BHAB 1
+      NlPf_ = dt_ / 2.0;
+      NlPfPrev_ = 0;
+      NlPfExp_ = dt_ / 2.0;
+      break;
+    case 6: // BHAB 2
+      NlPf_ = dt_;
+      NlPfPrev_ = dt_ / 2.0;
+      NlPfExp_ = dt_ / 2.0;
+      std::cout << "Error: need NlFT previous" << std::endl;
+      break;
+  }
+}
+
 void  Propagator::PropPrint(){
   std::cout << "Prop as cube:";
  for( int k = 0; k < N3_; ++k ){
@@ -170,28 +213,71 @@ void  Propagator::PropPrint(){
 double* Propagator::getLop(){ return LopFTd_; }
 double* Propagator::getProp(){ return Ud_; }
 
-/*void Propagator::Propagate( int ABflag ){
-
-
-}
-*/
 
 //////////////////////// Propagator Functions ///////////////////////
-/*
-void PropMaster( int ABflag, Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev) {
+
+
+void Propagator::PropMaster( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT) {
  
 if( IsoFlag_ == 1 ){
-  switch(ABflag){
-
-    case 0: PropAB0c( rhoFTnext, rhoFT); // Diffusion
-    case 1: PropAB1c( rhoFTnext, rhoFT, NL ); // AB 1
-    case 2: PropAB2c( rhoFTnext, rhoFT, NL, NLprev); // AB 2
-
-     }
+  
+  switch(StepFlag_){
+    case 0: 
+      PropAB0c( rhoFTnext, rhoFT); // Diffusion
+      break;
+    case 1: 
+      PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1
+      break;
+    case 2: 
+      std::cout << "Error: need NlFT previous" << std::endl;
+      break;
+    case 3:
+      PropHAB1c( rhoFTnext, rhoFT, NlFT);
+      break;
+    case 4:
+      std::cout << "Error: need NlFT previous" << std::endl;
+      break;
+    case 5: 
+      PropBHAB1c( rhoFTnext, rhoFT, NlFT);
+      break;
+    case 6:
+      std::cout << "Error: need NlFT previous" << std::endl;
+      break;
+  } // switch
 }
 else{ std::cout << "not written yet" << std::endl; }
 }
-*/
+
+void Propagator::PropMaster( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev) {
+ 
+if( IsoFlag_ == 1 ){
+  switch(StepFlag_){
+
+    case 0: // Diffusion
+      PropAB0c( rhoFTnext, rhoFT); 
+      break;
+    case 1: // AB 1
+      PropAB1c( rhoFTnext, rhoFT, NlFT ); 
+      break;
+    case 2: // AB 2
+      PropAB2c( rhoFTnext, rhoFT, NlFT, NlFTprev); 
+      break;
+    case 3: // HAB1
+      PropHAB1c( rhoFTnext, rhoFT, NlFT);
+      break;
+    case 4: // HAB2
+      PropHAB2c( rhoFTnext, rhoFT, NlFT, NlFTprev);
+      break;
+    case 5: // BHAB1
+      PropBHAB1c( rhoFTnext, rhoFT, NlFT);
+      break;
+    case 6: // BHAB2
+      PropBHAB2c( rhoFTnext, rhoFT, NlFT, NlFTprev);
+      break;
+  } // switch
+}
+else{ std::cout << "not written yet" << std::endl; }
+}
 
 void Propagator::PropAB0c( Ac3 &rhoFTnext, Ac3 &rhoFT ) {
 
@@ -213,28 +299,83 @@ void Propagator::PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT ) {
       for( int k = 0; k < N3_; ++k){
     
         rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
-          * ( rhoFT[i][j][k] + dt_ * NlFT[i][j][k] );
+          * ( rhoFT[i][j][k] ) + NlPf_ * NlFT[i][j][k] ;
         
       }
     }
   }
 }
 
-void Propagator::PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev ) {
-  
-  double Nlcon  = 3 * dt_ / 2;
-  double NlPcon  = dt_ / 2;
+void Propagator::PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev ) {
   
   for(int i = 0; i <  N1_ ; ++i){
     for( int j = 0; j <  N2_ ; ++j){
       for( int k = 0; k < N3_; ++k){
     
-//        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
- //         * ( rhoFT[i][j][k] + dt_ / 2 * ( 3 * NL[i][j][k] - NLprev[i][j][k] ) ) ;
-   
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] * ( rhoFT[i][j][k] ) 
+          + NlPf_ *  NlFT[i][j][k] - NlPfPrev_ * NlFTprev[i][j][k]    ;
+              
+      }
+    }
+  }
+}
+
+// Currently, propagator not included in prefactor
+void Propagator::PropHAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT ) {
+
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
         rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
-          * ( rhoFT[i][j][k] + Nlcon *  NL[i][j][k] 
-               - NlPcon * Ud_[i + j*N1_ +  k * N1_ * N2_] * NLprev[i][j][k]  )  ;
+          * ( rhoFT[i][j][k]  + NlPf_ * NlFT[i][j][k] );
+        
+      }
+    }
+  }
+}
+
+// Currently, propagator not included in prefactor
+void Propagator::PropHAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev ) {
+  
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] * 
+          ( rhoFT[i][j][k]  + NlPf_ *  NlFT[i][j][k] 
+            - Ud_[i + j*N1_ +  k * N1_ * N2_] *  NlPfPrev_ * NlFTprev[i][j][k] )   ;
+              
+      }
+    }
+  }
+}
+
+// Currently, propagator not included in prefactor
+void Propagator::PropBHAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT ) {
+
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+        rhoFTnext[i][j][k] = Ud_[i + j*N1_ +  k * N1_ * N2_] 
+          * ( rhoFT[i][j][k]  + NlPf_ * NlFT[i][j][k] ) + NlPf_ * NlFT[i][j][k];
+        
+      }
+    }
+  }
+}
+
+// Currently, propagator not included in prefactor
+void Propagator::PropBHAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev ) {
+  
+  for(int i = 0; i <  N1_ ; ++i){
+    for( int j = 0; j <  N2_ ; ++j){
+      for( int k = 0; k < N3_; ++k){
+    
+        rhoFTnext[i][j][k] =  Ud_[i + j*N1_ +  k * N1_ * N2_] * 
+          ( rhoFT[i][j][k] +  NlPfExp_ *  NlFT[i][j][k] )
+          + NlPf_ * NlFT[i][j][k] - NlPfPrev_ *  NlFTprev[i][j][k];
               
       }
     }

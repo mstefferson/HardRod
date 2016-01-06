@@ -30,6 +30,9 @@ class Propagator
     void PropIsoMaker2(double dt);
     void PropIsoMaker3(double dt);
   
+    // Prefactor initialization
+
+    void PreFacInit();
     //Build isotropic diffusion Propagator
   
     double* getLop();
@@ -37,18 +40,30 @@ class Propagator
     
     void PropPrint();
     
-    //void PropMaster( int ABflag, Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev);
+    void PropMaster(Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL);
+    void PropMaster(Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev);
     
     void PropAB0c( Ac3 &rhoFTnext, Ac3 &rhoFT); // Diffusion
-    void PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL ); // AB 1
-    void PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NL, Ac3 &NLprev); // AB 2
+    void PropAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT ); // AB 1
+    void PropAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev); // AB 2
+    void PropHAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT); // Hybrid AB 1
+    void PropHAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev); // Hybrid AB 2
+    void PropBHAB1c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT); // Better Hyrid AB 2
+    void PropBHAB2c( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT, Ac3 &NlFTprev); //Better Hyrid AB 2
 
   private:
-    bool IsoFlag_;
+
+    int IsoFlag_;
+    int StepFlag_;
+
     int N1_;
     int N2_;
     int N3_;
+
     double dt_;
+    double NlPf_;
+    double NlPfPrev_;
+    double NlPfExp_;
     double* LopFTd_; // Diagonal of operator
     double* Ud_;    // Diagonal of propator
 };
