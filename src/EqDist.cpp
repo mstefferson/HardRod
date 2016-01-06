@@ -85,7 +85,6 @@ void EqDist::feqInit( Ad1 &f ){
 // Calculate the coefficients of the Legendre expansion of the kernal
 // |sin \gamma| for a 2d hard rod interactions.
 
-
 void EqDist::KernCoeffCalcHardRod2D( ){
 
   // Build a vector of the kernal's coefficients.
@@ -190,7 +189,6 @@ void EqDist::BestCoeffExpLeg2D( ){
 
            NormCeC = trapz_periodicPhi(CosExpCos);
            Coeff_[n] = M_PI * bc_ * d2nVec_[n] * NormCeC / NormEc;
-
       }
       
 
