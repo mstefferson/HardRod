@@ -38,6 +38,7 @@ class OPclass{
   public:
     
     OPclass( int Nx, int Ny, int Nm, double* phi );
+    void OPinit();
     void OPmaker(Ad3& rho);
     void ConcCalc(Ad3& rho);
     void PolarOrdCalc(Ad3& rho);

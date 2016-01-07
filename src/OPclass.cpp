@@ -17,6 +17,7 @@ OPclass::OPclass( int Nx, int Ny, int Nm, double* phi ){
   QyyTemp_ = 0;
   QxxTemp_ = 0;
 
+  // Declare everything
   sin_ = new double[Nm_];
   cos_ = new double[Nm_];
   cossin_ = new double[Nm_];
@@ -33,6 +34,8 @@ OPclass::OPclass( int Nx, int Ny, int Nm, double* phi ){
     NO_[i] =  new double[Ny_];
   }
 
+  // Initialize to zero
+  OPinit();
 
   for( int i = 0; i < Nm_; ++i ){
     sin_[i] = sin( phi[i] );
@@ -44,6 +47,17 @@ OPclass::OPclass( int Nx, int Ny, int Nm, double* phi ){
 
 }
 
+// OP init
+void OPclass::OPinit(){
+
+  for(int i = 0; i < Nx_; i++){
+    for( int j = 0; j < Ny_; j++){
+      C_[i][j] = 0;
+      PO_[i][j] = 0;
+      NO_[i][j] = 0;
+    }
+  }
+}
 
 // Make OP
 

@@ -92,11 +92,12 @@ int main(int argc, char *argv[]){
   // Propagator
   Propagator DiffP( params.Nx, params.Ny, Nkm, kx, ky, km, 
       params.Dpar, params.Dr, params.dt, params.IsoDiffFlag, params.StepFlag);
-//  DiffP.PropPrint();
+  std::cout << "Made Propagator" << std::endl;
 
   // Mayer function
   MayerFncHardRod(params.Nx,params.Ny,params.Nm,params.Lx,params.Ly,params.Lrod,Fm);
   Forward3.fft(Fm,FmFT);
+  std::cout << "Made Mayer Function" << std::endl;
 
   // NL
   NlHardRodDr Nlclass( params.Nx, params.Ny, params.Nm, kx, ky, km, 
@@ -104,23 +105,25 @@ int main(int argc, char *argv[]){
   Nlclass.NLIntCalcC( rhoFT, rho, FmFT, MuExFT, diMuTemp, diMuTempFT, ji, jiFT, 
       NlFT, Forward3, Backward3);
   Nlclass.NlDrCalcC(rho, ji, jiFT, NlFT, Forward3); 
+  std::cout << "Made NL class" << std::endl;
 
   // Order parameters
   OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
-  OPs.OPmaker(rho);
+  if( params.wrtOpFlag ) { OPs.OPmaker(rho); }
+  std::cout << "Made OP class" << std::endl;
+
   // Let program know where we are
   std::cout << "Initialized all variables " << std::endl;
-  
 
   //Use Write Class
-  
   HRwriter FileWrite( params.Nx, params.Ny, params.Nm, 
       params.trial, OPs.getC(), OPs.getPO(), OPs.getNO(),
        &( rho[params.Nx/2 + 1][params.Ny/2 + 1][0] ), 
        &(rhoFT[0][0][1]), &(rhoFT[1][0][1]), &(rhoFT[0][1][1]), &(rhoFT[1][1][1]),
        &(rhoFT[0][0][2]), &(rhoFT[1][0][2]), &(rhoFT[0][1][2]), &(rhoFT[1][1][2]) );
-  FileWrite.writeOP();
   FileWrite.writeParams(params);
+  if( params.wrtOpFlag){ FileWrite.writeOP(); }
+  if( params.wrtRhoFlag){ FileWrite.writeRho(rho); }
   //FileWrite.writeRho(rho);
   recCounter = 1;
  
@@ -153,9 +156,8 @@ int main(int argc, char *argv[]){
         recCounter++;
         std::cout << "t/t_end = " << (double) t/time.getNt()  << std::endl; 
         
-        OPs.OPmaker(rho);
-    //    FileWrite.writeRho(rho);
-        FileWrite.writeOP();
+       if( params.wrtOpFlag ) {  OPs.OPmaker(rho); FileWrite.writeOP(); }
+       if( params.wrtRhoFlag ) { FileWrite.writeRho(rho); }
 
         ShitIsFucked = CheckBrokenDen( params.Nx, params.Ny, params.Nm, rho, rhoMax );
         if( (ShitIsFucked == 1) ){ std::cout << "Broke!" << std::endl; break; }

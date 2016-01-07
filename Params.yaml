@@ -22,5 +22,5 @@ Dpar : 1.0
 Dperp: 1.0 
 Dr : 6.0 
 PertrbAmp : 0.001
-wrtOpFlag : 1
+wrtOpFlag : 0
 wrtRhoFlag : 0
