@@ -10,10 +10,12 @@ pXmodes = 2;
 pYmodes = 2;
 pMmodes = 2;
 
-ABFlag  = 0;
+StepFlag  = 0;
 IsoDiffFlag = 1;
-EqIcFlag = 0;
+IcFlag = 0;
 RandPerbAmpFlag = 0;
+wrtOpFlag = 1;
+wrtRhoFlag = 0;
 
 dt   = 0.01;
 trec = 0.1;

@@ -1,14 +1,14 @@
 seed : 2 
 trial : 4 
-Nx : 64
-Ny : 64
-Nm : 64
+Nx : 16
+Ny : 16
+Nm : 16
 pXmodes : 4 
 pYmodes : 4 
 pMmodes : 4 
-ABFlag : 2
+StepFlag : 3
 IsoDiffFlag : 1 
-EqIcFlag : 0 
+IcFlag : 1 
 RandPerbAmpFlag : 0 
 dt   : 0.001 
 trec : 0.1
@@ -22,3 +22,5 @@ Dpar : 1.0
 Dperp: 1.0 
 Dr : 6.0 
 PertrbAmp : 0.001
+wrtOpFlag : 1
+wrtRhoFlag : 0

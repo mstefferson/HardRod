@@ -43,44 +43,18 @@ Propagator::Propagator( int N1, double* k1, double D, double dt, bool Iso)
 }
 
 // 3D
+
 Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
-                         double D, double dt, bool Iso){
+                         double Dpos, double Dr, double dt, int Iso, int StepFlag){
 
   IsoFlag_ = Iso;
+  StepFlag_ =  StepFlag;
   N1_ = N1;
   N2_ = N2;
   N3_ = N3;
   dt_ = dt;
-  if( IsoFlag_ == 1)
-  {
-  
-    LopFTd_ = new double [ N1_ * N2_ * N3_];
 
-    Ud_ = new double [ N1_ * N2_ * N3_];
-
-    LopIsoDiagMaker(k1, k2, k3, D);
-    PropIsoMaker3(dt);
-  
-  }
-  else //not written
-  {
-  
-    LopFTd_ = NULL;
-    Ud_   = NULL;
-  }
-
-}
-
-Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
-                         double Dpos, double Dr, double dt, bool Iso){
-
-  IsoFlag_ = Iso;
-  N1_ = N1;
-  N2_ = N2;
-  N3_ = N3;
-  dt_ = dt;
-  if( IsoFlag_ == 1)
-  {
+  if( IsoFlag_ == 1) {
   
     LopFTd_ = new double [ N1_ * N2_ * N3_];
 
@@ -94,6 +68,36 @@ Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* 
   else //not written
   {
   
+    LopFTd_ = NULL;
+    Ud_   = NULL;
+  }
+
+}
+
+
+Propagator::Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
+                         double D, double dt, int Iso, int StepFlag){
+
+  IsoFlag_ = Iso;
+  StepFlag_ =  StepFlag;
+  N1_ = N1;
+  N2_ = N2;
+  N3_ = N3;
+  dt_ = dt;
+
+  if( IsoFlag_ == 1) {
+  
+    LopFTd_ = new double [ N1_ * N2_ * N3_];
+
+    Ud_ = new double [ N1_ * N2_ * N3_];
+
+    LopIsoDiagMaker(k1, k2, k3, D);
+    PropIsoMaker3(dt);
+    PreFacInit();
+  
+  }
+  else //not written
+  {
     LopFTd_ = NULL;
     Ud_   = NULL;
   }
@@ -154,48 +158,56 @@ void Propagator::PropIsoMaker3(double dt)
  }
 }
 
+// Initialize commonly used prefactors
 void Propagator::PreFacInit(){
 
   switch(StepFlag_) {
     case 0: // Diffusion
+      std::cout << "Step Method: Diffusion" << std::endl;
       NlPf_ = 0;
       NlPfPrev_ = 0;
       NlPfExp_ = 0;
       break;
     case 1: // AB1
+      std::cout << "Step Method: Adams-Bash 1" << std::endl;
       NlPf_ = dt_;
       NlPfPrev_ = 0;
       NlPfExp_ = 0;
       break;
     case 2: // AB2
+      std::cout << "Step Method: Adams-Bash 2" << std::endl;
       NlPf_ = 3.0 * dt_ / 2.0;
       NlPfPrev_ = dt_ / 2.0;
       NlPfExp_ = 0;
       break;
     case 3: // HAB 1
+      std::cout << "Step Method: Hybrid Adams-Bash 1" << std::endl;
       NlPf_ = dt_;
       NlPfPrev_ = 0;
       NlPfExp_ = 0;
       break;
     case 4: // HAB 2
+      std::cout << "Step Method: Hybrid Adams-Bash 2" << std::endl;
       NlPf_ = 3.0 * dt_ / 2.0;
       NlPfPrev_ = dt_ / 2.0;
       NlPfExp_ = 0;
       break;
     case 5:  // BHAB 1
+      std::cout << "Step Method: Better Hybrid Adams-Bash 1" << std::endl;
       NlPf_ = dt_ / 2.0;
       NlPfPrev_ = 0;
       NlPfExp_ = dt_ / 2.0;
       break;
     case 6: // BHAB 2
+      std::cout << "Step Method: Better Hybrid Adams-Bash 2" << std::endl;
       NlPf_ = dt_;
       NlPfPrev_ = dt_ / 2.0;
       NlPfExp_ = dt_ / 2.0;
-      std::cout << "Error: need NlFT previous" << std::endl;
       break;
   }
 }
 
+// Print the propagator
 void  Propagator::PropPrint(){
   std::cout << "Prop as cube:";
  for( int k = 0; k < N3_; ++k ){
@@ -217,6 +229,10 @@ double* Propagator::getProp(){ return Ud_; }
 //////////////////////// Propagator Functions ///////////////////////
 
 
+// This function handles all the propagating. This should be
+// called by main. This function only deals with first order
+// AB stepping (no previous NL). This will run the an *AB1 even if
+// the flag is *AB2. Useful for the first step.
 void Propagator::PropMaster( Ac3 &rhoFTnext, Ac3 &rhoFT, Ac3 &NlFT) {
  
 if( IsoFlag_ == 1 ){
@@ -229,19 +245,19 @@ if( IsoFlag_ == 1 ){
       PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1
       break;
     case 2: 
-      std::cout << "Error: need NlFT previous" << std::endl;
+      PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1
       break;
     case 3:
       PropHAB1c( rhoFTnext, rhoFT, NlFT);
       break;
     case 4:
-      std::cout << "Error: need NlFT previous" << std::endl;
+      PropHAB1c( rhoFTnext, rhoFT, NlFT);
       break;
     case 5: 
       PropBHAB1c( rhoFTnext, rhoFT, NlFT);
       break;
     case 6:
-      std::cout << "Error: need NlFT previous" << std::endl;
+      PropBHAB1c( rhoFTnext, rhoFT, NlFT);
       break;
   } // switch
 }

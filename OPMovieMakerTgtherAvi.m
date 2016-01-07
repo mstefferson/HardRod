@@ -84,7 +84,7 @@ for ii = 1:nFrames
     title(axh4,TitlStr)
     %     keyboard
     
-    Fr = getframe(gcf);
+    Fr =  getframe(gcf,[74 47 450 350]);
     writeVideo(Mov,Fr);
     
 %     if ii ~= nFrames

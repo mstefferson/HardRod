@@ -11,20 +11,20 @@ class Propagator
 {
   public:
      
+    // Constructor
     Propagator();
     Propagator(int N1,double* k1, double D, double dt, bool IsoFlag);
     Propagator(int N1, int N2, double* k1, double* k2,double D, double dt, bool IsoFlag);
-    Propagator(int N1, int N2, int N3, double* k1, double* k2, double* k3, double D,
-               double dt, bool IsoFlag);
     Propagator( int N1, int N2, int N3, double* k1, double* k2, double* k3,
-                         double Dpos, double Dr, double dt, bool Iso);
-    // Constructor
-    
+                         double Dpos, double Dr, double dt, int IsoFlag, int StepFlag);
+    Propagator(int N1, int N2, int N3, double* k1, double* k2, double* k3, double D,
+               double dt, int IsoFlag, int StepFlag);
+     
+    //Build 
     void LopIsoDiagMaker(double*  k1t, double D);
     void LopIsoDiagMaker(double*  k1t, double* k2t, double* k3t, double D);
     void LopIsoDiagMaker(double* k1t, double* k2t, double* k3t, double Dpos, double Dr);
 
-    //Build 
     
     void PropIsoMaker1(double dt);
     void PropIsoMaker2(double dt);

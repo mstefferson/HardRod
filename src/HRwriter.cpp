@@ -183,5 +183,8 @@ void HRwriter::writeParams(system_params params){
   paramsFile_ << params.Dperp << std::endl;
   paramsFile_ << params.Dr << std::endl;
   paramsFile_ << params.PertrbAmp << std::endl;
+  paramsFile_ << params.IsoDiffFlag << std::endl;
+  paramsFile_ << params.StepFlag << std::endl;
+  paramsFile_ << params.IcFlag << std::endl;
 
 }

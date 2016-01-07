@@ -73,11 +73,7 @@ int main(int argc, char *argv[]){
 
 
   // Distribution
-  EqDist EqVar(params.Nm,params.bc);
-  //EqVar.printFis();
-  //EqVar.printFeq();
-  //EqVar.fisInit(fint);
-  EqVar.feqInit(fint);
+  EqDist EqVar(params.Nm,params.bc, fint, params.IcFlag);
 
   // Build the density matrix
   Rho3DMaker RhoInit;
@@ -95,7 +91,7 @@ int main(int argc, char *argv[]){
 
   // Propagator
   Propagator DiffP( params.Nx, params.Ny, Nkm, kx, ky, km, 
-      params.Dpar, params.Dr, params.dt, params.IsoDiffFlag);
+      params.Dpar, params.Dr, params.dt, params.IsoDiffFlag, params.StepFlag);
 //  DiffP.PropPrint();
 
   // Mayer function
@@ -118,7 +114,8 @@ int main(int argc, char *argv[]){
 
   //Use Write Class
   
-  HRwriter FileWrite( params.Nx, params.Ny, params.Nm, params.trial, OPs.getC(), OPs.getPO(), OPs.getNO(),
+  HRwriter FileWrite( params.Nx, params.Ny, params.Nm, 
+      params.trial, OPs.getC(), OPs.getPO(), OPs.getNO(),
        &( rho[params.Nx/2 + 1][params.Ny/2 + 1][0] ), 
        &(rhoFT[0][0][1]), &(rhoFT[1][0][1]), &(rhoFT[0][1][1]), &(rhoFT[1][1][1]),
        &(rhoFT[0][0][2]), &(rhoFT[1][0][2]), &(rhoFT[0][1][2]), &(rhoFT[1][1][2]) );
@@ -128,24 +125,8 @@ int main(int argc, char *argv[]){
   recCounter = 1;
  
   // First Step
-  if( (params.IsoDiffFlag == 1) ){
-    switch(params.ABFlag){
-
-      case 0: 
-        DiffP.PropAB0c( rhoFTnext, rhoFT); // Diffusion
-        std::cout << "Diffusion Progator" << std::endl;
-        break;
-      case 1: 
-        DiffP.PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1
-        std::cout << "Hybrid AB 1 " << std::endl;
-        break;
-      case 2: 
-        DiffP.PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1        
-        std::cout << "Hyrid AB 2 " << std::endl;
-        break;
-
-       }
-  }
+  // Propagate
+   DiffP.PropMaster(rhoFTnext,rhoFT,NlFT);
   
  //std::cout << "rhoFTnext" << std::endl << rhoFTnext; 
   // Main loop
@@ -157,28 +138,16 @@ int main(int argc, char *argv[]){
       //Update
       rhoFT = rhoFTnext;
       Backward3.fftNormalized(rhoFTnext,rho);
-      if( (params.ABFlag == 2) ){ NlFTprev = NlFT; }
+      if( (params.StepFlag == 2) || (params.StepFlag) == 4 || (params.StepFlag == 6) ){ 
+        NlFTprev = NlFT; }
       
       //Calculate NL
       Nlclass.NLIntCalcC( rhoFT, rho, FmFT, MuExFT, diMuTemp, diMuTempFT, ji, jiFT, 
         NlFT, Forward3, Backward3);
-
-
-    if( (params.IsoDiffFlag == 1) ){
-      switch(params.ABFlag){
-
-        case 0: 
-          DiffP.PropAB0c( rhoFTnext, rhoFT); // Diffusion
-          break;
-        case 1: 
-          DiffP.PropAB1c( rhoFTnext, rhoFT, NlFT ); // AB 1
-          break;
-        case 2: 
-          DiffP.PropAB2c( rhoFTnext, rhoFT, NlFT, NlFTprev); // AB 2
-          break;
-         }
-    }
       
+      // Propagate
+      DiffP.PropMaster(rhoFTnext,rhoFT,NlFT,NlFTprev);
+     
       if( (t % time.getNcount() == 0) )
       {
         recCounter++;

@@ -9,14 +9,17 @@ struct system_params{
       Nx,
       Ny,
       Nm,
-      ABFlag, 
-      IsoDiffFlag,
-      EqIcFlag,
-      RandPerbAmpFlag,
       pXmodes,
       pYmodes,
-      pMmodes;
-      
+      pMmodes,
+      StepFlag, 
+      IsoDiffFlag,
+      IcFlag,
+      RandPerbAmpFlag,
+      wrtOpFlag,
+      wrtRhoFlag;
+
+       
   double dt,
          trec,
          tend,

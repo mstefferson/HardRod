@@ -23,9 +23,9 @@ if( param_name.compare( "Nm" ) == 0 ) {
   std::cout << " Nm = " << param_value << std::endl;
 }
 
-if( param_name.compare( "ABFlag" ) == 0 ) {
-  params.ABFlag =  atoi( param_value.c_str() );
-  std::cout << " ABFlag = " << param_value << std::endl;
+if( param_name.compare( "StepFlag" ) == 0 ) {
+  params.StepFlag =  atoi( param_value.c_str() );
+  std::cout << " StepFlag = " << param_value << std::endl;
 }
 
 if( param_name.compare( "IsoDiffFlag" ) == 0 ) {
@@ -33,14 +33,24 @@ if( param_name.compare( "IsoDiffFlag" ) == 0 ) {
   std::cout << " IsoDiffFlag = " << param_value << std::endl;
 }
 
-if( param_name.compare( "EqIcFlag" ) == 0 ) {
-  params.EqIcFlag =  atoi( param_value.c_str() );
-  std::cout << " EqIcFlag = " << param_value << std::endl;
+if( param_name.compare( "IcFlag" ) == 0 ) {
+  params.IcFlag =  atoi( param_value.c_str() );
+  std::cout << " IcFlag = " << param_value << std::endl;
 }
 
 if( param_name.compare( "RandPerbAmpFlag" ) == 0 ) {
   params.RandPerbAmpFlag =  atoi( param_value.c_str() );
   std::cout << " RandPerbAmpFlag = " << param_value << std::endl;
+}
+
+if( param_name.compare( "wrtRhoFlag" ) == 0 ) {
+  params.wrtRhoFlag =  atoi( param_value.c_str() );
+  std::cout << " wrtRhoFlag = " << param_value << std::endl;
+}
+
+if( param_name.compare( "wrtOpFlag" ) == 0 ) {
+  params.wrtOpFlag =  atoi( param_value.c_str() );
+  std::cout << " wrtOpFlag = " << param_value << std::endl;
 }
 
 if( param_name.compare( "pXmodes" ) == 0 ) {

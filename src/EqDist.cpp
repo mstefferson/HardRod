@@ -35,6 +35,40 @@ EqDist::EqDist(int Nm, double bc){
  
   feqInit(); // Equilbrium
   fisInit(); // isotropic 
+
+}
+
+EqDist::EqDist(int Nm, double bc, Ad1 &f, int ICflag){
+
+  DEBUG_ = false;
+
+  Nm_ = Nm; // Number of gridpoints
+  Nc_ = 10; // Number of Coeff
+  bc_ = bc; // scaled concentration
+  
+  spGrid phi;
+  phi_ = new double[Nm_];
+  phi.xVecMaker(Nm_, 2*M_PI,phi_);
+
+  fis_ = new double[Nm_];  //Isotropic
+  feq_ = new double[Nm_];  //Equilibrium
+  Coeff_ = new double[Nc_]; // Vector of coeff an, exp[ sum an cos ( 2n phi ) ]
+  d2nVec_ = new double[Nc_]; // Kernal
+
+ 
+  feqInit(); // Equilbrium
+  fisInit(); // isotropic 
+
+  switch(ICflag){
+    case 0 :
+      std::cout << "Perturbing about isotropic" << std::endl;
+      fisInit(f);
+      break;
+    case 1:
+      std::cout << "Perturbing about equilibrium" << std::endl;
+      feqInit(f);
+      break;
+  }
 }
 
 void EqDist::fisInit( ){

@@ -29,6 +29,7 @@ class EqDist{
     // Constructor
     EqDist();
     EqDist(int N, double bc);
+    EqDist(int N, double bc, Ad1 &f, int ICflag);
 
     double trapz_periodicPhi(const double f[]  );
     void Normalize(double f[]);
