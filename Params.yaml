@@ -6,8 +6,10 @@ Nm : 16
 pXmodes : 4 
 pYmodes : 4 
 pMmodes : 4 
+  # 0-Diff; 1-AB1; 2-AB2; 3-HAB1; 4-HAB2; 5-BHAB1; 6-BHAB2
 StepFlag : 3
-IsoDiffFlag : 1 
+IsoDiffFlag : 0 
+  # 0-Iso; 1-Equil
 IcFlag : 1 
 RandPerbAmpFlag : 0 
 dt   : 0.001 
