@@ -23,8 +23,11 @@ for( int hh = 0; hh < 3, ++h) {
 
         switch( hh ) {
           case 0: diMuTempFT[ii][jj][kk] = 1i * kx[ii] * MuExFT[ii][jj][kk];
+                  break;
           case 1: diMuTempFT[ii][jj][kk] = 1i * ky[jj] * MuExFT[ii][jj][kk];
-          case 2: diMuTempFT[ii][jj][kk] = 1i * km[kk] * MuExFT[ii][jj][kk];
+                  break;
+          case 2: diMuTe mpFT[ii][jj][kk] = 1i * km[kk] * MuExFT[ii][jj][kk];
+                  break;
         }
 
       }

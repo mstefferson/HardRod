@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
 
   // Order parameters
   OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
-  if( params.wrtOpFlag ) { OPs.OPmaker(rho); }
+dd  if( params.wrtOpFlag ) { OPs.OPmaker(rho); }
   std::cout << "Made OP class" << std::endl;
 
   // Let program know where we are
