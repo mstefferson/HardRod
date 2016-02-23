@@ -107,9 +107,11 @@ int main(int argc, char *argv[]){
   Nlclass.NlDrCalcC(rho, ji, jiFT, NlFT, Forward3); 
   std::cout << "Made NL class" << std::endl;
 
-  // Order parameters
+  // Order parameters: make (no values) regardless of saving of not
   OPclass OPs( params.Nx, params.Ny, params.Nm, phi);
-dd  if( params.wrtOpFlag ) { OPs.OPmaker(rho); }
+  if( params.wrtOpFlag ) { 
+  OPs.OPmaker(rho); 
+  }
   std::cout << "Made OP class" << std::endl;
 
   // Let program know where we are
