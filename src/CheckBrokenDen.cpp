@@ -24,7 +24,7 @@ int CheckBrokenDen( int Nx, int Ny, int Nm, Ad3 &rho, double rhoMax ){
         }
 
         // Infinit
-        if( ( isinf(rho[i][j][k]) == 1 ) ){
+        if( ( std::isinf(rho[i][j][k]) == 1 ) ){
           ShitIsFucked = 1;
           std::cout << " Density if Inf " << std::endl;
          }
