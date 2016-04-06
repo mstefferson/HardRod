@@ -32,8 +32,8 @@ MAIN = ../diffuse.exe
 all: $(MAIN)
 
 $(MAIN): $(OBJS) 
-	$(CC) $(CINCLUDES) $(CFLAGS) $(OBJS) -o $@ $(LFLAGS) $(FFTFLAGS) $(YAMLFLAGS) $(OMPFLAGS)
-
+	$(CC) $(CINCLUDES) $(CFLAGS) $(OMPFLAGS) $(OBJS) -o $@ $(LFLAGS) $(FFTFLAGS) $(YAMLFLAGS) 
+	 
 #$(MAIN): $(OBJS) 
 #	$(CC) -o $@ $(OBJS) $(LDFLAGS) $(cincludes)
 
