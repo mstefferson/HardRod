@@ -1,13 +1,16 @@
 # define compiler
 CC = g++-5
 # define compile time flags
-CFLAGS = -g3 -Wall -fopenmp -g -DDEBUG
+CFLAGS = -g3 -Wall -g -DDEBUG
 #CFLAGS = -fopenmp -O3 -std=c++11
 #CFLAGS = -fopenmp -O3 
 # define any directories over than /usr/include/ containing header files
 CINCLUDES = -I/usr/local/include -I . -I/usr/local/include/yaml-cpp
 # define libraries paths over than /usr/include
-LDFLAGS = -lfftw3 -lfftw3_omp -lm -lyaml-cpp
+LFLAGS = -lm 
+FFTFLAGS = -lfftw3 -lfftw3_omp 
+YAMLFLAGS = -lyaml-cpp
+OMPFLAGS = -fopenmp
 # define cpp source files (currently not using)
 # SRCS = diffuseFT1D.cpp fftw++.cc (currently not using)
 # make objects with macro (currently not using)
@@ -29,7 +32,7 @@ MAIN = ../diffuse.exe
 all: $(MAIN)
 
 $(MAIN): $(OBJS) 
-	$(CC) $(CINCLUDES) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) 
+	$(CC) $(CINCLUDES) $(CFLAGS) $(OBJS) -o $@ $(LFLAGS) $(FFTFLAGS) $(YAMLFLAGS) $(OMPFLAGS)
 
 #$(MAIN): $(OBJS) 
 #	$(CC) -o $@ $(OBJS) $(LDFLAGS) $(cincludes)
